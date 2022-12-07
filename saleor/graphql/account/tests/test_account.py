@@ -1532,7 +1532,9 @@ CUSTOMER_CREATE_MUTATION = """
     mutation CreateCustomer(
         $email: String, $firstName: String, $lastName: String, $channel: String
         $note: String, $billing: AddressInput, $shipping: AddressInput,
-        $redirect_url: String, $languageCode: LanguageCodeEnum) {
+        $redirect_url: String, $languageCode: LanguageCodeEnum,
+        $externalReference: String
+    ) {
         customerCreate(input: {
             email: $email,
             firstName: $firstName,
@@ -1543,6 +1545,7 @@ CUSTOMER_CREATE_MUTATION = """
             redirectUrl: $redirect_url,
             languageCode: $languageCode,
             channel: $channel,
+            externalReference: $externalReference
         }) {
             errors {
                 field
@@ -1564,6 +1567,7 @@ CUSTOMER_CREATE_MUTATION = """
                 isActive
                 isStaff
                 note
+                externalReference
             }
         }
     }
@@ -1588,6 +1592,7 @@ def test_customer_create(
     note = "Test user"
     address_data = convert_dict_keys_to_camel_case(address.as_data())
     redirect_url = "https://www.example.com"
+    external_reference = "test-ext-ref"
     variables = {
         "email": email,
         "firstName": first_name,
@@ -1598,6 +1603,7 @@ def test_customer_create(
         "redirect_url": redirect_url,
         "languageCode": "PL",
         "channel": channel_PLN.slug,
+        "externalReference": external_reference,
     }
 
     response = staff_api_client.post_graphql(
@@ -1622,6 +1628,7 @@ def test_customer_create(
     assert data["user"]["lastName"] == last_name
     assert data["user"]["note"] == note
     assert data["user"]["languageCode"] == "PL"
+    assert data["user"]["externalReference"] == external_reference
     assert not data["user"]["isStaff"]
     assert data["user"]["isActive"]
 
@@ -1773,16 +1780,22 @@ def test_customer_update(
     mutation UpdateCustomer(
             $id: ID!, $firstName: String, $lastName: String,
             $isActive: Boolean, $note: String, $billing: AddressInput,
-            $shipping: AddressInput, $languageCode: LanguageCodeEnum) {
-        customerUpdate(id: $id, input: {
-            isActive: $isActive,
-            firstName: $firstName,
-            lastName: $lastName,
-            note: $note,
-            defaultBillingAddress: $billing
-            defaultShippingAddress: $shipping,
-            languageCode: $languageCode
-        }) {
+            $shipping: AddressInput, $languageCode: LanguageCodeEnum,
+            $externalReference: String
+        ) {
+        customerUpdate(
+            id: $id,
+            input: {
+                isActive: $isActive,
+                firstName: $firstName,
+                lastName: $lastName,
+                note: $note,
+                defaultBillingAddress: $billing
+                defaultShippingAddress: $shipping,
+                languageCode: $languageCode,
+                externalReference: $externalReference
+                }
+            ) {
             errors {
                 field
                 message
@@ -1800,6 +1813,7 @@ def test_customer_update(
                 languageCode
                 isActive
                 note
+                externalReference
             }
         }
     }
@@ -1816,6 +1830,7 @@ def test_customer_update(
     first_name = "new_first_name"
     last_name = "new_last_name"
     note = "Test update note"
+    external_reference = "test-ext-ref"
     address_data = convert_dict_keys_to_camel_case(address.as_data())
 
     new_street_address = "Updated street address"
@@ -1830,6 +1845,7 @@ def test_customer_update(
         "billing": address_data,
         "shipping": address_data,
         "languageCode": "PL",
+        "externalReference": external_reference,
     }
     response = staff_api_client.post_graphql(
         query, variables, permissions=[permission_manage_users]
@@ -1855,6 +1871,7 @@ def test_customer_update(
     assert data["user"]["lastName"] == last_name
     assert data["user"]["note"] == note
     assert data["user"]["languageCode"] == "PL"
+    assert data["user"]["externalReference"] == external_reference
     assert not data["user"]["isActive"]
 
     (

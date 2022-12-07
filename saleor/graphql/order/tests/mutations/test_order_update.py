@@ -8,18 +8,25 @@ from .....product.models import ProductVariant
 from ....tests.utils import get_graphql_content
 
 ORDER_UPDATE_MUTATION = """
-    mutation orderUpdate($id: ID!, $email: String, $address: AddressInput) {
+    mutation orderUpdate(
+        $id: ID!, $email: String, $address: AddressInput, $externalReference: String
+    ) {
         orderUpdate(
-            id: $id, input: {
+            id: $id,
+            input: {
                 userEmail: $email,
+                externalReference: $externalReference,
                 shippingAddress: $address,
-                billingAddress: $address}) {
+                billingAddress: $address
+                }
+            ) {
             errors {
                 field
                 code
             }
             order {
                 userEmail
+                externalReference
             }
         }
     }
@@ -34,6 +41,7 @@ def test_order_update(
     order_with_lines,
     graphql_address_data,
 ):
+    # given
     order = order_with_lines
     order.user = None
     order.save()
@@ -42,14 +50,26 @@ def test_order_update(
     assert not order.shipping_address.first_name == graphql_address_data["firstName"]
     assert not order.billing_address.last_name == graphql_address_data["lastName"]
     order_id = graphene.Node.to_global_id("Order", order.id)
-    variables = {"id": order_id, "email": email, "address": graphql_address_data}
+    external_reference = "test-ext-ref"
+
+    variables = {
+        "id": order_id,
+        "email": email,
+        "address": graphql_address_data,
+        "externalReference": external_reference,
+    }
+
+    # when
     response = staff_api_client.post_graphql(
         ORDER_UPDATE_MUTATION, variables, permissions=[permission_manage_orders]
     )
     content = get_graphql_content(response)
+
+    # then
     assert not content["data"]["orderUpdate"]["errors"]
     data = content["data"]["orderUpdate"]["order"]
     assert data["userEmail"] == email
+    assert data["externalReference"] == external_reference
 
     order.refresh_from_db()
     order.shipping_address.refresh_from_db()
@@ -59,6 +79,7 @@ def test_order_update(
     assert order.user_email == email
     assert order.user is None
     assert order.status == OrderStatus.UNFULFILLED
+    assert order.external_reference == external_reference
     order_updated_webhook_mock.assert_called_once_with(order)
 
 

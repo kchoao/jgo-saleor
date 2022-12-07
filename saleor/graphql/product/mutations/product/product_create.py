@@ -13,7 +13,12 @@ from .....product.search import update_product_search_vector
 from ....attribute.types import AttributeValueInput
 from ....attribute.utils import AttributeAssignmentMixin, AttrValuesInput
 from ....channel import ChannelContext
-from ....core.descriptions import ADDED_IN_38, DEPRECATED_IN_3X_INPUT, RICH_CONTENT
+from ....core.descriptions import (
+    ADDED_IN_38,
+    ADDED_IN_310,
+    DEPRECATED_IN_3X_INPUT,
+    RICH_CONTENT,
+)
 from ....core.fields import JSONString
 from ....core.mutations import ModelMutation
 from ....core.scalars import WeightScalar
@@ -69,6 +74,9 @@ class ProductInput(graphene.InputObjectType):
             "Fields required to update the product private metadata." + ADDED_IN_38
         ),
         required=False,
+    )
+    external_reference = graphene.String(
+        description="External ID of this product." + ADDED_IN_310, required=False
     )
 
 

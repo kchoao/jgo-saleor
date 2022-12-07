@@ -17,7 +17,12 @@ from .....product.utils.variants import generate_and_set_variant_name
 from ....attribute.types import AttributeValueInput
 from ....attribute.utils import AttributeAssignmentMixin, AttrValuesInput
 from ....channel import ChannelContext
-from ....core.descriptions import ADDED_IN_31, ADDED_IN_38, PREVIEW_FEATURE
+from ....core.descriptions import (
+    ADDED_IN_31,
+    ADDED_IN_38,
+    ADDED_IN_310,
+    PREVIEW_FEATURE,
+)
 from ....core.mutations import ModelMutation
 from ....core.scalars import WeightScalar
 from ....core.types import NonNullList, ProductError
@@ -83,6 +88,10 @@ class ProductVariantInput(graphene.InputObjectType):
             "Fields required to update the product variant private metadata."
             + ADDED_IN_38
         ),
+        required=False,
+    )
+    external_reference = graphene.String(
+        description="External ID of this product variant." + ADDED_IN_310,
         required=False,
     )
 

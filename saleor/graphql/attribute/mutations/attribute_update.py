@@ -52,6 +52,9 @@ class AttributeUpdateInput(graphene.InputObjectType):
     available_in_grid = graphene.Boolean(
         required=False, description=AttributeDescriptions.AVAILABLE_IN_GRID
     )
+    external_reference = graphene.String(
+        description="External ID of this product." + ADDED_IN_310, required=False
+    )
 
 
 class AttributeUpdate(AttributeMixin, ModelWithExtRefMutation):

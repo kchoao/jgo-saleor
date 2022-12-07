@@ -28,6 +28,9 @@ from .enums import WarehouseClickAndCollectOptionEnum
 class WarehouseInput(graphene.InputObjectType):
     slug = graphene.String(description="Warehouse slug.")
     email = graphene.String(description="The email address of the warehouse.")
+    external_reference = graphene.String(
+        description="External ID of the warehouse." + ADDED_IN_310, required=False
+    )
 
 
 class WarehouseCreateInput(WarehouseInput):

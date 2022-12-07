@@ -15855,6 +15855,13 @@ input WarehouseCreateInput {
   """The email address of the warehouse."""
   email: String
 
+  """
+  External ID of the warehouse.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
+
   """Warehouse name."""
   name: String!
 
@@ -15886,6 +15893,13 @@ input WarehouseUpdateInput {
 
   """The email address of the warehouse."""
   email: String
+
+  """
+  External ID of the warehouse.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 
   """Warehouse name."""
   name: String
@@ -17562,6 +17576,13 @@ input ProductCreateInput {
   """
   privateMetadata: [MetadataInput!]
 
+  """
+  External ID of this product.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
+
   """ID of the type that product belongs to."""
   productType: ID!
 }
@@ -17734,6 +17755,13 @@ input ProductInput {
   Added in Saleor 3.8.
   """
   privateMetadata: [MetadataInput!]
+
+  """
+  External ID of this product.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 """
@@ -18235,6 +18263,13 @@ input ProductVariantCreateInput {
   """
   privateMetadata: [MetadataInput!]
 
+  """
+  External ID of this product variant.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
+
   """Product ID of which type is the variant."""
   product: ID!
 
@@ -18361,6 +18396,13 @@ input ProductVariantBulkCreateInput {
   Added in Saleor 3.8.
   """
   privateMetadata: [MetadataInput!]
+
+  """
+  External ID of this product variant.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 
   """Stocks of a product available for sale."""
   stocks: [StockInput!]
@@ -18557,6 +18599,13 @@ input ProductVariantInput {
   Added in Saleor 3.8.
   """
   privateMetadata: [MetadataInput!]
+
+  """
+  External ID of this product variant.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 """
@@ -19327,6 +19376,13 @@ input DraftOrderCreateInput {
   """
   redirectUrl: String
 
+  """
+  External ID of this order.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
+
   """Variant line input consisting of variant ID and quantity of products."""
   lines: [OrderLineCreateInput!]
 }
@@ -19426,6 +19482,13 @@ input DraftOrderInput {
   URL of a view where users should be redirected to see the order details. URL in RFC 1808 format.
   """
   redirectUrl: String
+
+  """
+  External ID of this order.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 """
@@ -19872,6 +19935,13 @@ input OrderUpdateInput {
 
   """Shipping address of the customer."""
   shippingAddress: AddressInput
+
+  """
+  External ID of this order.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 """
@@ -22001,6 +22071,13 @@ input AttributeCreateInput {
 
   """Whether the attribute can be displayed in the admin product list."""
   availableInGrid: Boolean
+
+  """
+  External ID of this attribute.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 input AttributeValueCreateInput {
@@ -22030,6 +22107,13 @@ input AttributeValueCreateInput {
 
   """File content type."""
   contentType: String
+
+  """
+  External ID of this attribute value.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 
   """Name of a value displayed in the interface."""
   name: String!
@@ -22095,6 +22179,13 @@ input AttributeUpdateInput {
 
   """Whether the attribute can be displayed in the admin product list."""
   availableInGrid: Boolean
+
+  """
+  External ID of this product.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 input AttributeValueUpdateInput {
@@ -22124,6 +22215,13 @@ input AttributeValueUpdateInput {
 
   """File content type."""
   contentType: String
+
+  """
+  External ID of this attribute value.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 
   """Name of a value displayed in the interface."""
   name: String
@@ -22973,6 +23071,13 @@ input UserCreateInput {
   languageCode: LanguageCodeEnum
 
   """
+  External ID of the customer.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
+
+  """
   URL of a view where users should be redirected to set the password. URL in RFC 1808 format.
   """
   redirectUrl: String
@@ -23018,6 +23123,13 @@ input CustomerInput {
 
   """User language code."""
   languageCode: LanguageCodeEnum
+
+  """
+  External ID of the customer.
+  
+  Added in Saleor 3.10.
+  """
+  externalReference: String
 }
 
 """

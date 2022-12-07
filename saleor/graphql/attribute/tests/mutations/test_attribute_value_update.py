@@ -26,6 +26,7 @@ mutation AttributeValueUpdate($id: ID!, $input: AttributeValueUpdateInput!) {
             name
             slug
             value
+            externalReference
             file {
                 url
                 contentType
@@ -55,7 +56,14 @@ def test_update_attribute_value(
     value = pink_attribute_value
     node_id = graphene.Node.to_global_id("AttributeValue", value.id)
     name = "Crimson name"
-    variables = {"input": {"name": name}, "id": node_id}
+    external_reference = "test-ext-ref"
+    variables = {
+        "id": node_id,
+        "input": {
+            "name": name,
+            "externalReference": external_reference,
+        },
+    }
 
     # when
     response = staff_api_client.post_graphql(
@@ -68,6 +76,11 @@ def test_update_attribute_value(
     value.refresh_from_db()
     assert data["attributeValue"]["name"] == name == value.name
     assert data["attributeValue"]["slug"] == slugify(name)
+    assert (
+        data["attributeValue"]["externalReference"]
+        == external_reference
+        == value.external_reference
+    )
     assert name in [
         value["node"]["name"] for value in data["attribute"]["choices"]["edges"]
     ]

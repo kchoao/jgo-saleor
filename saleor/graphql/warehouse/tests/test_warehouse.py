@@ -130,6 +130,7 @@ mutation createWarehouse($input: WarehouseCreateInput!) {
             name
             slug
             companyName
+            externalReference
             address {
                 id
             }
@@ -165,6 +166,7 @@ mutation updateWarehouse($input: WarehouseUpdateInput!, $id: ID!) {
             companyName
             isPrivate
             clickAndCollectOption
+            externalReference
             address {
                 id
                 streetAddress1
@@ -668,6 +670,7 @@ def test_mutation_create_warehouse(
             "name": "Test warehouse",
             "slug": "test-warhouse",
             "email": "test-admin@example.com",
+            "externalReference": "test-ext-ref",
             "address": {
                 "streetAddress1": "Teczowa 8",
                 "city": "Wroclaw",
@@ -693,6 +696,7 @@ def test_mutation_create_warehouse(
     assert created_warehouse["name"] == warehouse.name
     assert created_warehouse["slug"] == warehouse.slug
     assert created_warehouse["companyName"] == warehouse.address.company_name
+    assert created_warehouse["externalReference"] == warehouse.external_reference
 
 
 def test_mutation_create_warehouse_shipping_zone_provided(
@@ -897,9 +901,10 @@ def test_mutation_update_warehouse(
     warehouse_id = graphene.Node.to_global_id("Warehouse", warehouse.id)
     warehouse_old_name = warehouse.name
     warehouse_slug = warehouse.slug
+    external_reference = "test-ext-ref"
     variables = {
         "id": warehouse_id,
-        "input": {"name": "New name"},
+        "input": {"name": "New name", "externalReference": external_reference},
     }
     staff_api_client.post_graphql(
         MUTATION_UPDATE_WAREHOUSE,
@@ -910,6 +915,7 @@ def test_mutation_update_warehouse(
     assert not (warehouse.name == warehouse_old_name)
     assert warehouse.name == "New name"
     assert warehouse.slug == warehouse_slug
+    assert warehouse.external_reference == external_reference
 
 
 @patch("saleor.plugins.webhook.plugin.get_webhooks_for_event")

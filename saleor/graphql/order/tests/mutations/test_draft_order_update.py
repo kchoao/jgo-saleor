@@ -86,14 +86,17 @@ def test_draft_order_update_voucher_not_available(
 
 DRAFT_ORDER_UPDATE_MUTATION = """
     mutation draftUpdate(
-        $id: ID!, $voucher: ID!, $customerNote: String, $shippingAddress: AddressInput
+        $id: ID!, $voucher: ID!, $customerNote: String, $shippingAddress: AddressInput,
+        $externalReference: String
     ) {
-        draftOrderUpdate(id: $id,
-                            input: {
-                                voucher: $voucher,
-                                customerNote: $customerNote,
-                                shippingAddress: $shippingAddress,
-                            }) {
+        draftOrderUpdate(
+            id: $id,
+            input: {
+                voucher: $voucher,
+                customerNote: $customerNote,
+                shippingAddress: $shippingAddress,
+                externalReference: $externalReference
+            }) {
             errors {
                 field
                 message
@@ -101,6 +104,7 @@ DRAFT_ORDER_UPDATE_MUTATION = """
             }
             order {
                 userEmail
+                externalReference
             }
         }
     }
@@ -117,10 +121,12 @@ def test_draft_order_update(
     order_id = graphene.Node.to_global_id("Order", order.id)
     voucher_id = graphene.Node.to_global_id("Voucher", voucher.id)
     customer_note = "Test customer note"
+    external_reference = "test-ext-ref"
     variables = {
         "id": order_id,
         "voucher": voucher_id,
         "customerNote": customer_note,
+        "externalReference": external_reference,
     }
 
     response = staff_api_client.post_graphql(
@@ -133,6 +139,11 @@ def test_draft_order_update(
     assert order.voucher
     assert order.customer_note == customer_note
     assert order.search_vector
+    assert (
+        data["order"]["externalReference"]
+        == external_reference
+        == order.external_reference
+    )
 
 
 def test_draft_order_update_with_non_draft_order(

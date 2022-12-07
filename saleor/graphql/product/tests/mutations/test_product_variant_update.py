@@ -103,10 +103,11 @@ def test_update_product_variant_by_id(
 ):
     query = """
         mutation updateVariant (
-            $id: ID!,
-            $sku: String!,
+            $id: ID!
+            $sku: String!
             $quantityLimitPerCustomer: Int!
-            $trackInventory: Boolean!,
+            $trackInventory: Boolean!
+            $externalReference: String
             $attributes: [AttributeValueInput!]) {
                 productVariantUpdate(
                     id: $id,
@@ -114,12 +115,14 @@ def test_update_product_variant_by_id(
                         sku: $sku,
                         trackInventory: $trackInventory,
                         attributes: $attributes,
+                        externalReference: $externalReference
                         quantityLimitPerCustomer: $quantityLimitPerCustomer,
                     }) {
                     productVariant {
                         name
                         sku
                         quantityLimitPerCustomer
+                        externalReference
                         channelListings {
                             channel {
                                 slug
@@ -135,6 +138,7 @@ def test_update_product_variant_by_id(
     sku = "test sku"
     quantity_limit_per_customer = 5
     attr_value = "S"
+    external_reference = "test-ext-ref"
 
     variables = {
         "id": variant_id,
@@ -142,6 +146,7 @@ def test_update_product_variant_by_id(
         "trackInventory": True,
         "quantityLimitPerCustomer": quantity_limit_per_customer,
         "attributes": [{"id": attribute_id, "values": [attr_value]}],
+        "externalReference": external_reference,
     }
 
     response = staff_api_client.post_graphql(
@@ -154,6 +159,7 @@ def test_update_product_variant_by_id(
 
     assert data["name"] == variant.name
     assert data["sku"] == sku
+    assert data["externalReference"] == external_reference == variant.external_reference
     assert data["quantityLimitPerCustomer"] == quantity_limit_per_customer
     product_variant_updated_webhook_mock.assert_called_once_with(
         product.variants.last()

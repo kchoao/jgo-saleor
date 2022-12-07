@@ -98,13 +98,13 @@ from .resolvers import (
     resolve_collections,
     resolve_digital_content_by_id,
     resolve_digital_contents,
-    resolve_product_by_id_slug_or_ext_ref,
+    resolve_product,
     resolve_product_type_by_id,
     resolve_product_types,
     resolve_product_variants,
     resolve_products,
     resolve_report_product_sales,
-    resolve_variant_by_id_sku_or_ext_ref,
+    resolve_variant,
 )
 from .sorters import (
     CategorySortingInput,
@@ -396,11 +396,11 @@ class ProductQueries(graphene.ObjectType):
         if channel is None and not has_required_permissions:
             channel = get_default_channel_slug_or_graphql_error()
 
-        product = resolve_product_by_id_slug_or_ext_ref(
+        product = resolve_product(
             info,
             id=id,
             slug=slug,
-            ext_ref=external_reference,
+            external_reference=external_reference,
             channel_slug=channel,
             requestor=requestor,
         )
@@ -468,7 +468,7 @@ class ProductQueries(graphene.ObjectType):
         if channel is None and not has_required_permissions:
             channel = get_default_channel_slug_or_graphql_error()
 
-        variant = resolve_variant_by_id_sku_or_ext_ref(
+        variant = resolve_variant(
             info,
             id,
             sku,

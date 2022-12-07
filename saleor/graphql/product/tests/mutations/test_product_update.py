@@ -67,6 +67,7 @@ MUTATION_UPDATE_PRODUCT = """
                             }
                         }
                     }
+                    externalReference
                 }
                 errors {
                     message
@@ -113,6 +114,7 @@ def test_update_product(
 
     metadata_key = "md key"
     metadata_value = "md value"
+    external_reference = "test-ext-ref"
 
     # Mock tax interface with fake response from tax gateway
     monkeypatch.setattr(
@@ -136,6 +138,7 @@ def test_update_product(
             "attributes": [{"id": attribute_id, "values": [attr_value]}],
             "metadata": [{"key": metadata_key, "value": metadata_value}],
             "privateMetadata": [{"key": metadata_key, "value": metadata_value}],
+            "externalReference": external_reference,
         },
     }
 
@@ -157,6 +160,11 @@ def test_update_product(
     assert not data["product"]["category"]["name"] == category.name
     assert product.metadata == {metadata_key: metadata_value, **old_meta}
     assert product.private_metadata == {metadata_key: metadata_value, **old_meta}
+    assert (
+        data["product"]["externalReference"]
+        == external_reference
+        == product.external_reference
+    )
 
     attributes = data["product"]["attributes"]
 

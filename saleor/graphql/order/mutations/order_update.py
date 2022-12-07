@@ -22,6 +22,9 @@ class OrderUpdateInput(graphene.InputObjectType):
     billing_address = AddressInput(description="Billing address of the customer.")
     user_email = graphene.String(description="Email address of the customer.")
     shipping_address = AddressInput(description="Shipping address of the customer.")
+    external_reference = graphene.String(
+        description="External ID of this order." + ADDED_IN_310, required=False
+    )
 
 
 class OrderUpdate(DraftOrderCreate, ModelWithExtRefMutation):
@@ -48,7 +51,12 @@ class OrderUpdate(DraftOrderCreate, ModelWithExtRefMutation):
         draft_order_cleaned_input = super().clean_input(info, instance, data)
 
         # We must to filter out field added by DraftOrderUpdate
-        editable_fields = ["billing_address", "shipping_address", "user_email"]
+        editable_fields = [
+            "billing_address",
+            "shipping_address",
+            "user_email",
+            "external_reference",
+        ]
         cleaned_input = {}
         for key in draft_order_cleaned_input:
             if key in editable_fields:

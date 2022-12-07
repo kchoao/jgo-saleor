@@ -60,9 +60,7 @@ def resolve_digital_contents(_info):
     return models.DigitalContent.objects.all()
 
 
-def resolve_product_by_id_slug_or_ext_ref(
-    info, id, slug, ext_ref, channel_slug, requestor
-):
+def resolve_product(info, id, slug, external_reference, channel_slug, requestor):
     database_connection_name = get_database_connection_name(info.context)
     qs = models.Product.objects.using(database_connection_name).visible_to_user(
         requestor, channel_slug=channel_slug
@@ -73,7 +71,7 @@ def resolve_product_by_id_slug_or_ext_ref(
     elif slug:
         return qs.filter(slug=slug).first()
     else:
-        return qs.filter(external_reference=ext_ref).first()
+        return qs.filter(external_reference=external_reference).first()
 
 
 @traced_resolver
@@ -105,8 +103,15 @@ def resolve_product_types(_info):
 
 
 @traced_resolver
-def resolve_variant_by_id_sku_or_ext_ref(
-    _info, id, sku, ext_ref, *, channel_slug, requestor, requestor_has_access_to_all
+def resolve_variant(
+    _info,
+    id,
+    sku,
+    external_reference,
+    *,
+    channel_slug,
+    requestor,
+    requestor_has_access_to_all
 ):
     visible_products = models.Product.objects.visible_to_user(
         requestor, channel_slug
@@ -120,7 +125,7 @@ def resolve_variant_by_id_sku_or_ext_ref(
     elif sku:
         return qs.filter(sku=sku).first()
     else:
-        return qs.filter(external_reference=ext_ref).first()
+        return qs.filter(external_reference=external_reference).first()
 
 
 @traced_resolver

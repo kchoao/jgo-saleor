@@ -30,6 +30,7 @@ UPDATE_ATTRIBUTE_MUTATION = """
             name
             slug
             unit
+            externalReference
             choices(first: 10) {
                 edges {
                     node {
@@ -51,17 +52,23 @@ UPDATE_ATTRIBUTE_MUTATION = """
 """
 
 
-def test_update_attribute_name(
+def test_update_attribute(
     staff_api_client, color_attribute, permission_manage_product_types_and_attributes
 ):
     # given
     query = UPDATE_ATTRIBUTE_MUTATION
     attribute = color_attribute
     name = "Wings name"
+    external_reference = "test-ext-ref"
     slug = attribute.slug
     node_id = graphene.Node.to_global_id("Attribute", attribute.id)
     variables = {
-        "input": {"name": name, "addValues": [], "removeValues": []},
+        "input": {
+            "name": name,
+            "addValues": [],
+            "removeValues": [],
+            "externalReference": external_reference,
+        },
         "id": node_id,
     }
 
@@ -77,6 +84,11 @@ def test_update_attribute_name(
     assert data["attribute"]["name"] == name == attribute.name
     assert data["attribute"]["slug"] == slug == attribute.slug
     assert data["attribute"]["productTypes"]["edges"] == []
+    assert (
+        data["attribute"]["externalReference"]
+        == external_reference
+        == attribute.external_reference
+    )
 
 
 @freeze_time("2022-05-12 12:00:00")
