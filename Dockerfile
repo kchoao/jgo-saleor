@@ -1,3 +1,7 @@
+#Build environment variables for Railway
+ARG DATABASE_URL
+
+
 ### Build and install packages
 FROM python:3.9 as build-python
 
@@ -48,6 +52,8 @@ WORKDIR /app
 ARG STATIC_URL
 ENV STATIC_URL ${STATIC_URL:-/static/}
 RUN SECRET_KEY=dummy STATIC_URL=${STATIC_URL} python3 manage.py collectstatic --no-input
+RUN SECRET_KEY=dummy DATABASE_URL=${DATABASE_URL} python3 manage.py migrate
+RUN SECRET_KEY=dummy DATABASE_URL=${DATABASE_URL} python3 manage.py createsuperuser
 
 EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
