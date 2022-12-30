@@ -45,8 +45,8 @@ COPY --from=build-python /usr/local/bin/ /usr/local/bin/
 COPY . /app
 WORKDIR /app
 
-COPY root.crt /root/.postgresql/
-RUN chown 0 root.crt & chmod 600 root.crt
+# COPY root.crt /root/.postgresql/
+# RUN chown 0 root.crt & chmod 600 root.crt
 ARG STATIC_URL
 ENV STATIC_URL ${STATIC_URL:-/static/}
 RUN SECRET_KEY=dummy STATIC_URL=${STATIC_URL} python3 manage.py collectstatic --no-input
